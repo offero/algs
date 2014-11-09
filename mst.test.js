@@ -15,3 +15,5 @@ wg.addEdge(2, 4, 1);
 var sortedEdges = U.sortBy(wg.getEdges(), function(e) { return e[2]; });
 
 var mst1 = new mst.MST(wg);
+var mst2 = new mst.MST(wg, mst.QuickUnionFind);
+var mst3 = new mst.MST(wg, mst.QuickUnionFind2);
