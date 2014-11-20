@@ -1,0 +1,27 @@
+{
+  "name": "offero-algs",
+  "version": "0.0.1",
+  "description": "Various algorithm and data structure implementations and notes; mostly for learning and future reference.",
+  "main": "index.js",
+  "dependencies": {
+    "underscore": "^1.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:offero/algs.git"
+  },
+  "keywords": [
+    "Algorithms",
+    "Data Structures"
+  ],
+  "author": "Chris K",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/offero/algs/issues"
+  },
+  "homepage": "https://github.com/offero/algs"
+}

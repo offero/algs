@@ -24,6 +24,10 @@ General algorithm:
 
 Greedy algorithm (like Dijkstra)
 
+Prim: Choose closest vertex to the tree (via undirected edge)
+Dijkstra: Choose closest vertex to the source (via directed path)
+Both create a MST.
+
 Use a Priority Queue to maintain the frontier edges. When a new edge is added
 to the MST, add the new node's edges to the PQ.
 Add minimum frontier edge to MST if it would not create a cycle (both ends
