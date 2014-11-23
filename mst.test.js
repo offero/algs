@@ -1,3 +1,6 @@
+/* jshint node: true */
+"use strict";
+
 var U = require('underscore');
 var mst = require('./mst');
 
