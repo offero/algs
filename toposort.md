@@ -74,7 +74,6 @@ without finding one with 0 in-degree, then the graph contains a cycle.
 While building a predecessor chain, if we see a node in the chain that we have
 already visited, then there is a cycle.
 
-
 # Misc.
 
 Graphs made using Graph::Easy
