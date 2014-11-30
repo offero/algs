@@ -64,21 +64,26 @@ function inDegrees(dag){
     return indegs;
 }
 
-/* The root of a DAG has in-degree 0 */
-function findRoot(dag){
+/* The root of a DAG has in-degree 0.
+ * The thing to watch out for is multiple nodes with in-degree 0.
+ */
+function findRoots(dag){
     // return the first node we find in indegree of 0
-    var root = _.find(_.pairs(inDegrees(dag)), function(ind){
+    var roots = _.find(_.pairs(inDegrees(dag)), function(ind){
         return ind[1] === 0;
-    })[0];
-    return root;
+    });
+    return roots;
+}
+function findRoot(dag){
+    return findRoots(dag)[0];
 }
 
+/* Perform depth-first-search adding each node to array in post-order.
+ * Return array.
+ * TODO: Take into account multiple roots.
+ */
 function topologicalSort(dag){
-    // perform depth-first-search adding each node to list in post-order
-    // return array
     var a = findRoot(dag);  // src
-    // var edgeTo = {a: null};
-    // var distTo = {a: 0};
     var unvisited = [];
     var visited = {};
 
@@ -88,26 +93,22 @@ function topologicalSort(dag){
     // result: nodes topologically ordered
     var topo = [];
 
-    function visit(a, b){
-        // if(visited[b] === true){ return; }
-        // var dist;
-        // dist = distTo[a] + dag.edges[a][b];
-        // edgeTo[b] = a;
-        // distTo[b] = dist;
+    function visit(b){
         stack.push(b);
         // visited, in this case, means that we have added it to our stack
-        // once already
+        // once already. We mark it for fast lookup because our stack is an
+        // array and checking that would be O(n).
         visited[b] = true;
     }
 
     function unvisitedNeighbors(a){
         var neighbors;
-        var unvisited;
+        var _unvisited;
         neighbors = _.keys(dag.edges[a]);
-        unvisited = _.filter(neighbors, function(b){
+        _unvisited = _.filter(neighbors, function(b){
             return visited[b] !== true;
         });
-        return unvisited;
+        return _unvisited;
     }
 
     while(stack.length > 0){
@@ -119,7 +120,7 @@ function topologicalSort(dag){
             topo.push(a);
         } else {
             // push each neighbor onto the stack
-            _.each(unvisited, _.partial(visit, a));
+            _.each(unvisited, visit);
         }
     }
 
@@ -139,8 +140,8 @@ DAGSP.prototype.calculateShortestPaths = function calculateShortestPaths(){
     var self = this;
     var topoOrder = topologicalSort(self.dag);
     var a, neighbors;
-    self.distTo = {};
-    self.edgeTo = {};
+    var root = topoOrder[topoOrder.length-1];
+    self.distTo[root] = 0;
 
     function _relax(a, b){
         self.relax([a, b, self.dag.edges[a][b]]);
@@ -155,16 +156,17 @@ DAGSP.prototype.calculateShortestPaths = function calculateShortestPaths(){
 
 DAGSP.prototype.relax = function relax(e){
     // a should already have a distance entry
-    console.log(e);
+    // console.log(e);
     var a, b, wt, dist;
     a = e[0];
     b = e[1];
     wt = e[2];
+    // console.log("distTo[a]: " + this.distTo[a] + " weight: " + wt);
     dist = this.distTo[a] + wt;
     // if there is no entry for b or if the new distance is better
     if(!this.distTo[b] || dist < this.distTo[b]){
         this.edgeTo[b] = a;
-        this.distTo[b] = wt;
+        this.distTo[b] = dist;
     }
 };
 

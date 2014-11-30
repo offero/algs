@@ -41,5 +41,8 @@ U.each(edges, function(e){
 var dagsp = new DAGSP(dag);
 dagsp.calculateShortestPaths();
 
+console.log(dagsp.distTo);
+console.log(dagsp.edgeTo);
+
 // .load toposort.test.js
 
