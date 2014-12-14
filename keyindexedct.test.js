@@ -4,24 +4,24 @@
 var KIC = require('./keyindexedct');
 
 var strings = [
-    "Bxyz",
     "BBxyz",
-    "BBwxyz",
+    "Bxyz",
     "BBBxyz",
-    "Axyz",
+    "BBwxyz",
     "AAxyz",
-    "AAwxyz",
-    "AAvwxyz",
-    "AAAxyz",
-    "AAAAxyz",
-    "AAAAAxyz",
     "AAAAAAxyz",
+    "Axyz",
+    "AAvwxyz",
+    "AAwxyz",
+    "AAAxyz",
+    "AAAAAxyz",
+    "AAAAxyz",
     "Cxyz",
     "CCxyz"
 ];
 
 function test1(){
-    console.log(KIC.countingSort(strings));
+    console.log(KIC.countingSort(strings, 2));
 }
 
 test1();
