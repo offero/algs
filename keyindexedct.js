@@ -10,11 +10,6 @@ var punycode = require('punycode');  // unicode code point look-up
  * number, Genome data (A, C, T, G), etc.
  */
 
-/* For a given item, reuturn its 0-based index integer key.
- * This should be a constant-time function mapping an item/prefix
- * to its array index.
- */
-
 /* Make all undefined entries in the array 0s. */
 function init0(arr){
     var i;
@@ -37,10 +32,10 @@ function accumulate(arr){
 
 function countItems(arr, keyfn, start, end){
     if(start === undefined){ start = 0; }
-    if(end === undefined){ end = arr.length; }
+    if(end === undefined){ end = arr.length - 1; }
     var i, k, counts = [];
 
-    for(i=start; i<end; i++){
+    for(i=start; i<=end; i++){
         k = keyfn(arr[i]);
         if(counts[k+1] === undefined){ counts[k+1]=0; }
         counts[k+1]++;
@@ -48,6 +43,7 @@ function countItems(arr, keyfn, start, end){
     return counts;
 }
 
+/* Convert function arguments to array */
 function argsToArray(argObj){
     var k, res = [];
     for(k in argObj){
@@ -58,6 +54,7 @@ function argsToArray(argObj){
     return res;
 }
 
+/* Custom partial impl. */
 function partial(fn, args){
     var self = this;
     // var args = argsToArray(arguments);
@@ -70,27 +67,31 @@ function partial(fn, args){
     return fn2;
 }
 
-function countingSort(arr, idx, start, end){
-    var i, counts;
-    for(i=start; i<=end; i++){
-        counts = countItems(arr, _keyfn, start, end);
-    }
-}
-
+/* Non-recursive, in-place, minimal-memory version.
+ * *prefixBlocks* acts as the stack of sub-ranges to sort a level
+ * deeper.
+ * Minimal memory because we only need to keep an extra sorted array of the
+ * sub-range that we are working on. We don't need to make copies of the
+ * sub-array to sort it.
+ *
+ * This sort is stable.
+ */
 function countingSort(stringArr, pfxlen){
     if(pfxlen === undefined){ pfxlen = 1; }
 
     var i, k, p, counts, sortedArr;
 
+    /* For a given item, reuturn its 0-based array index integer key.
+    *  This should be a constant-time function mapping an item/prefix
+    *  to its array index.
+    */
     var _keyfn = function(idx, itm){
-        // var args = arguments;
-        // console.log("keyfn args: " + argsToArray(args));
         return punycode.ucs2.decode(itm[idx])[0];
     };
 
     // Prefix block method:
     //                  idx, start, end
-    var prefixBlocks = [[0, 0, stringArr.length]];
+    var prefixBlocks = [[0, 0, stringArr.length - 1]];
     var block, keyfn, idx, pfx, curPfx, curStart, start, end;
 
     while(prefixBlocks.length > 0){
@@ -105,46 +106,35 @@ function countingSort(stringArr, pfxlen){
         counts = init0(counts);
         counts = accumulate(counts);
 
-        curPfx = stringArr[i].slice(0, idx+1);
-        curStart = start;
-        for(i=start; i<end; i++){
-            pfx = stringArr[i].slice(0, idx+1);
-            if(pfx !== curPfx || i === end-1){
-                prefixBlocks.push([idx+1, curStart, i]);
-                curStart = i;
-            }
-
+        for(i=start; i<=end; i++){
             k = keyfn(stringArr[i]);
             sortedArr[counts[k]] = stringArr[i];
             counts[k]++;
         }
 
-        // copy sorted items back to original array
+        // copy sorted items back to original array (sub-range now sorted)
         for(i=0; i<sortedArr.length; i++){
             stringArr[i+start] = sortedArr[i];
         }
 
-    }
-
-    // original
-    for(p=0; p<pfxlen; p++){
-        sortedArr = [];
-        // get the character code at index p for a given string
-        keyfn = partial(_keyfn, [p]);
-
-        counts = countItems(stringArr, keyfn, start, end);
-        counts = init0(counts);
-        counts = accumulate(counts);
-
-        // Store items in the sorted array
-        for(i=0; i<stringArr.length; i++){
-            k = keyfn(stringArr[i]);
-            sortedArr[counts[k]+start] = stringArr[i];
-            counts[k]++;
+        if(idx < pfxlen){
+            curStart = start;
+            curPfx = stringArr[start].slice(0, idx+1);
+            for(i=start; i<=end; i++){
+                pfx = stringArr[i].slice(0, idx+1);
+                if(pfx !== curPfx){
+                    if(curStart !== i-1){ // don't add a 1-element sub-range
+                        prefixBlocks.push([idx+1, curStart, i-1]);
+                    }
+                    curStart = i;
+                    curPfx = stringArr[i].slice(0, idx+1);
+                }
+            }
+            if(curStart !== end){ // don't add a 1-element sub-range
+                prefixBlocks.push([idx+1, curStart, end]);
+            }
         }
 
-        stringArr = sortedArr;
-        console.log(stringArr);
     }
 
     return stringArr;
