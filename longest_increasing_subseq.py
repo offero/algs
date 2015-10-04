@@ -5,8 +5,11 @@ The Longest Increasing Subsequence via Dynamic Programming.
 [1 2 3 4 3 2 1] -> [1 2 3 4]
 [1 0 2 0 3 0 4] -> [1 2 3 4] or [0 2 3 4]
 """
+from copy import deepcopy
+from time import sleep
+from pptab import pptable
 
-def lis(arr):
+def lis(arr, sim=False):
     n = len(arr)
 
     # Matrix of values of (sub-sequence length, largest sub-sequence element)
@@ -41,17 +44,66 @@ def lis(arr):
     # Retrace our steps in reverse to produce the actual sequence
     # Retracing at the end prevents us from having to store all the
     # possible sequences in the result matrix. O(n)
-    elts = [l[0][-1][1]]
-    ctr = l[0][-1][0]
-    for i in reversed(range(n-1)):
-        if not elts or l[0][i][0] < ctr:
-            elts.append(l[0][i][1])
-        ctr = l[0][i][0]
 
-    return list(reversed(elts))
+    i, j = 0, n-1
+    elts = []
+    while len(elts) < l[0][n-1][0]:
+
+        while i < n-1 and \
+                l[i][j][1] is not None and \
+                l[i+1][j][0] == l[i][j][0]:
+            i += 1
+
+        if j < n-1 and \
+                (l[i][j][0] < l[i][j+1][0]
+                or j==i-1):
+            elts.append(l[i][j+1][1])
+
+        if sim and j >= 0:
+            l2 = deepcopy(l)
+            l2[i][j] = "*" + str(l2[i][j]) + "*"
+            sleep(1)
+            pptable(l2)
+            print()
+            print(elts)
+            print()
+
+        if j >= 0:
+            j -= 1
+
+
+    if sim:
+        pptable([[elt[0] for elt in row] for row in l])
+        pptable([[elt[1] for elt in row] for row in l])
+
+    return l[0][n-1], list(reversed(elts))
+
+def test_res(res, expval):
+    (l, m), elts = res
+    assert l == expval
+    assert len(elts) == expval
+    for i in range(0, len(elts)-1):
+        assert elts[i] <= elts[i+1]
+
+
+EXAMPLES = [
+    ([2, 1, 3, 1, 4, 1, 5], 4),
+    ([100, 2, 3, 0, 2, 1, 0, 3, 4], 4),
+    ([1, 2, 3, 4, 2, 1, 1, 0, 0], 4),
+    ([5, 4, 3, 2, 1], 1),
+    ([1, 2, 3, 4, 5], 5),
+    ([0, 0, 0, 0, 0], 5),
+    ([1, 2, 3, 0, 0, 1, 2, 3, 4], 6)
+]
 
 if __name__ == "__main__":
-    print( lis([2, 1, 3, 1, 4, 1, 5]) )
-    print( lis([5, 4, 3, 2, 1]) )
-    print( lis([1, 2, 3, 4, 5]) )
-    print( lis([0, 0, 0, 0, 0]) )
+
+    for arr, expval in EXAMPLES:
+        res = lis(arr)
+        try:
+            test_res(res, expval)
+        except AssertionError as err:
+            print("Error testing:", arr, res)
+            raise
+
+        print(res)
