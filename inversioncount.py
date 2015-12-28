@@ -22,13 +22,12 @@ def three_inversions_ctlower(arr):
     return ct
 
 
-def three_inversions_bin(arr):
-    pass
-
 def test_1():
     examples = [
-        ([5,1,2,4,2,1], 5),
-        ([5,1,3,2,1], 4)
+        ([5, 1, 2, 4, 2, 1], 5),
+        ([5, 1, 3, 2, 1], 4),
+        ([8, 4, 2, 1], 4),
+        ([9, 6, 4, 5, 8], 2),
     ]
     for arr, exp in examples:
         res = three_inversions_ctlower(arr)
