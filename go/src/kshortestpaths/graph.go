@@ -11,10 +11,10 @@ type Node interface {
 }
 
 type Graph interface {
-	Node(string) Node  // Get node by name/id
-	Edges(Node) []Node // nodes accessible from a given node
 	Distance(Node, Node) int
-	// AddEdge(Node, Node)
+	Neighbors(Node) chan Node
+	Node(string) Node // Get node by name/id
+	// EstimatedDistance(Node, Node) int
 }
 
 // Station Impl
@@ -49,14 +49,17 @@ func (s StationGraph) Distance(a Node, b Node) int {
 	return int(Haversine(as.Lat(), as.Lon(), bs.Lat(), bs.Lon()))
 }
 
-func (s StationGraph) Edges(a Node) []Node {
-	// TODO: This sucks, return another interface
+// Iterator via channel
+func (s StationGraph) Neighbors(a Node) chan Node {
+	nodes := make(chan Node)
 
-	nodes := make([]Node, len(s.edges[a.Id()]))
-	for i := 0; i < len(s.edges[a.Id()]); i++ {
-		nodes[i] = s.edges[a.Id()][i]
-	}
-	// return s.edges[a.Id()]
+	go func() {
+		for _, stationNode := range s.edges[a.Id()] {
+			nodes <- stationNode
+		}
+		close(nodes)
+	}()
+
 	return nodes
 }
 

@@ -20,6 +20,10 @@ func MakeHeap() Heap {
 	return h
 }
 
+func (h *Heap) Len() int {
+	return len(h.HeapValues)
+}
+
 func getHeapIndexComponents(idx int) (int, int, int) {
 	level := int(math.Log2(float64(idx)))
 	base := int(math.Exp2(float64(level)))
@@ -123,7 +127,10 @@ func (h *Heap) Pop() (priority int, value interface{}) {
 
 		if hasLeftChild && !hasRightChild {
 			// swap with left if left is higher prio
-			swapWithLeftChild()
+			leftPriority := h.HeapValues[leftIdx].priority
+			if leftPriority < priority {
+				swapWithLeftChild()
+			}
 			break
 		}
 
@@ -143,9 +150,10 @@ func (h *Heap) Pop() (priority int, value interface{}) {
 			priorityOfIdxWithWhichToSwap = rightPriority
 		}
 
-		if priorityOfIdxWithWhichToSwap < priority {
-			swapFunc()
+		if priorityOfIdxWithWhichToSwap >= priority {
+			break
 		}
+		swapFunc()
 	}
 
 	return hv.priority, hv.value

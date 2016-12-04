@@ -25,8 +25,16 @@ func TestKSD(t *testing.T) {
 	// nycpas := g.Node("NYCPAS")
 	// alxamt := g.Node("ALXAMT")
 	dcaust := g.Node("DCAUST")
-	paths := KShortestDijkstra(g, bossst, dcaust)
-	for _, path := range paths {
-		fmt.Println(PathDistance(g, path), path)
+	prevDist := 0
+	maxPaths := 10
+	maxPathLength := 5
+	paths := KShortestDijkstra(g, bossst, dcaust, maxPaths, maxPathLength)
+	for path := range paths {
+		dist := PathDistance(g, path)
+		fmt.Println(dist, path)
+		if dist < prevDist {
+			t.Errorf("Path order incorrect")
+		}
+		prevDist = dist
 	}
 }
