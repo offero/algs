@@ -1,7 +1,7 @@
 package kshortestpaths
 
 import (
-	"fmt"
+	// "fmt"
 	"testing"
 )
 
@@ -23,7 +23,7 @@ func TestParentIndexing(t *testing.T) {
 		if parent(idx) != parentIdx {
 			t.Errorf("parent(%d) = %d Expected %d", idx, parent(idx), parentIdx)
 		}
-		fmt.Printf("parent(%d) = %d\n", idx, parentIdx)
+		// fmt.Printf("parent(%d) = %d\n", idx, parentIdx)
 	}
 
 }
@@ -45,8 +45,8 @@ func TestChildIndexing(t *testing.T) {
 			t.Errorf("rightChild(%d) = %d Expected %d", idx, rightChild(idx), rightChildIdx)
 		}
 
-		fmt.Printf("leftChild(%d) = %d : rightChild(%d) = %d\n", idx, leftChild(idx),
-			idx, rightChild(idx))
+		// fmt.Printf("leftChild(%d) = %d : rightChild(%d) = %d\n", idx, leftChild(idx),
+		// 	idx, rightChild(idx))
 	}
 
 }
@@ -61,14 +61,14 @@ func TestHeapPushPop(t *testing.T) {
 	heap.Push(4, "four-2")
 
 	for _, expectedPriority := range []int{1, 2, 4, 4, 5, 10} {
-		fmt.Println(heap)
-		prio, val := heap.Pop()
-		fmt.Printf("val: %s type: %T\n", val, val)
+		// fmt.Println(heap)
+		prio, _ := heap.Pop()
+		// fmt.Printf("val: %s type: %T\n", val, val)
 		if prio != expectedPriority {
 			t.Errorf("Pop failed. Found: %d Expected: %d", prio, expectedPriority)
 		}
 	}
-	fmt.Println(heap)
+	// fmt.Println(heap)
 
 	_, val := heap.Pop()
 
