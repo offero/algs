@@ -1,7 +1,8 @@
 package kshortestpaths
 
 import (
-	// "fmt"
+	"container/heap"
+	"fmt"
 	"testing"
 )
 
@@ -75,4 +76,18 @@ func TestHeapPushPop(t *testing.T) {
 	if val != nil {
 		t.Errorf("Popping with an empty heap should return a nil value")
 	}
+}
+
+func TestPriorityQueue(t *testing.T) {
+	pq := MakePriorityQueue()
+	st1 := StationNode{"1", []float64{1, 1}}
+	st2 := StationNode{"2", []float64{2, 2}}
+	path1 := []Node{st1, st2}
+	path2 := []Node{st2, st1}
+	heap.Push(&pq, &PathHeapItem{1, path1, -1})
+	fmt.Println(len(pq))
+	fmt.Printf("%#v\n", pq)
+	heap.Push(&pq, &PathHeapItem{1, path2, -1})
+	fmt.Println(len(pq))
+	fmt.Printf("%#v\n", pq)
 }
