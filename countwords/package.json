@@ -1,0 +1,14 @@
+{
+  "name": "countwords",
+  "version": "1.0.0",
+  "description": "",
+  "main": "countWordsInText.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Christopher Kirkos",
+  "license": "ISC",
+  "dependencies": {
+    "benchmark": "^2.1.3"
+  }
+}
