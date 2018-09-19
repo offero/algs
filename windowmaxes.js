@@ -17,7 +17,7 @@ function findMaxes(arr, k) {
     let windowMax = 0;
 
     // O(n) time because we only increment both head and windowMax
-    for(head=0; head <= arr.length; head++) {
+    for(let head=0; head <= arr.length; head++) {
         let start = head-(k-1); // start of window
 
         if (start > 0) {
