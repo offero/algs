@@ -127,4 +127,110 @@ function main() {
     console.log(ex2, '->', findBestPalindrome(ex2));
 }
 
-main();
+/* Second attempt after sleep.
+ *
+ * I realized that the above does not exactly solve the problem as there are more possible
+ * permutations.
+ *
+ * The next approach is to have a recursive approach where we take the left, right or middle.
+ *
+ *
+ * abc d cxy
+ *
+ */
+
+function bestPalindrome(left, middle, right) {
+    // console.log(left, '|', middle, '|', right);
+
+    if (left.length === 0 && right.length === 0) {
+        return middle;
+    }
+
+    if (left.length === 0) {
+        return reversed(right) + middle + right;
+    }
+
+    if (right.length === 0) {
+        return left + middle + reversed(left);
+    }
+
+    // constrint: middle is a palindrome
+    const lchar = left[left.length-1];
+    const rchar = right[0];
+
+    if (lchar && rchar && lchar === rchar) {
+        const newLeft = left.substring(0, left.length-1); // up to the last character
+        const newRight = right.substring(1); // without the first character
+        const newMiddle = lchar + middle + rchar;
+        return bestPalindrome(newLeft, newMiddle, newRight);
+    }
+
+    // choose to add the left character to the palindrome
+    const newLeft = left.substring(0, left.length-1);
+    const newMiddleL = lchar + middle + lchar;
+    const optionL = bestPalindrome(newLeft, newMiddleL, right);
+
+    // choose to add the right character to the palindrome
+    const newRight = right.substring(1);
+    const newMiddleR = rchar + middle + rchar;
+    const optionR = bestPalindrome(left, newMiddleR, newRight);
+
+    if (optionL.length < optionR.length) {
+        return optionL;
+    }
+
+    if (optionR.length < optionL.length) {
+        return optionR;
+    }
+
+    // equal length
+    if (optionL < optionR) return optionL;
+    return optionR;
+}
+
+function findBestPalindromeTake2(word) {
+    let best;
+    for (let i = 0; i < word.length; i++) {
+        let j = i;
+        while(word[i] == word[j]) {
+            j++;
+        }
+        let middle = word.substring(i, j);
+        let left = word.substring(0, i);
+        let right = word.substring(j);
+
+        const candidate = bestPalindrome(left, middle, right);
+
+        if (best === undefined || candidate.length < best.length) {
+            best = candidate;
+        }
+
+        if (candidate.length === best.length) {
+            best = candidate < best ? candidate : best;
+        }
+    }
+    return best;
+}
+
+
+function mainTake2() {
+    let ex;
+
+    ex = 'a';
+    console.log(ex, '->', findBestPalindromeTake2(ex));
+
+    ex = 'aa';
+    console.log(ex, '->', findBestPalindromeTake2(ex));
+
+    ex = 'aaa';
+    console.log(ex, '->', findBestPalindromeTake2(ex));
+
+    ex = 'abcddcxy';
+    console.log(ex, '->', findBestPalindromeTake2(ex));
+
+    ex = 'abcdcxy';
+    console.log(ex, '->', findBestPalindromeTake2(ex));
+}
+
+mainTake2();
+
