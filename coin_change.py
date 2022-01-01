@@ -42,8 +42,24 @@ def makeChange(n, coins=[1, 5, 10, 25], cache=None):
     return min_coins
 
 
+def makeChangeDynamic(n, coins=[1, 5, 10, 25]):
+    cache = [None] * (n+1)
+    cache[0] = 0
+    for i in range(1, n+1):
+        min_coins = None
+        for coin in coins:
+            if i - coin < 0:
+                continue
+            if min_coins is None or cache[i - coin] < min_coins:
+                min_coins = cache[i - coin]
+        cache[i] = min_coins + 1
+    return cache[-1]
+
 
 if __name__ == "__main__":
     print(makeChange(1))
     print(makeChange(6))
     print(makeChange(49))
+    print(makeChangeDynamic(1))
+    print(makeChangeDynamic(6))
+    print(makeChangeDynamic(49))
