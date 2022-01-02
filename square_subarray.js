@@ -1,7 +1,7 @@
 /*
  * Given a 2D boolean array, find the largest square subarray of
  * true values. The return value should be the side length of the
- * largest square subarray subarray
+ * largest square subarray
  *
  * - Brute force 1: Consider each square as the top left start of a square.
  *   Expand the square until we hit an edge or until a false is encountered.
@@ -14,13 +14,21 @@ const ex1 = [
     [0, 1, 1, 0], // row 2
 ];
 
+const ex2 = [
+    [0, 1, 0, 0, 0],
+    [1, 1, 1, 1, 0],
+    [0, 1, 1, 1, 1],
+    [0, 1, 1, 1, 1],
+    [0, 1, 1, 1, 1],
+    [0, 1, 1, 1, 1],
+];
+
 function largestSquareFromPos(arr, [i, j]) {
     if (!arr[i][j]) {
         return 0;
     }
     // start at i, j
     // check all values if we expand to i+1, j+1
-    debugger;
     let size = 1
     while (true) {
         // check to see if we are out of bounds
@@ -69,3 +77,4 @@ function largestSquareSubarray(arr) {
 }
 
 console.log(largestSquareSubarray(ex1));
+console.log(largestSquareSubarray(ex2));
